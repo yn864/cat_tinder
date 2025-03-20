@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'detail_screen.dart';
-import 'widgets/like_button.dart';
+import '../widgets/like_button.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -15,8 +15,15 @@ class _HomeScreenState extends State<HomeScreen> {
   int _likeCount = 0;
   Map<String, dynamic>? _breedInfo;
 
+  final String _apiKey = 'live_Ftg2bXZDUddrYOhOb8o0onjpAEbf0LDEWGRTmAPEVz1s3YY0xDbfqEqEKKU8EKFP';
+
   Future<void> _fetchCat() async {
-    final response = await http.get(Uri.parse('https://api.thecatapi.com/v1/images/search?has_breeds=true'));
+    final response = await http.get(
+      Uri.parse('https://api.thecatapi.com/v1/images/search?has_breeds=true'),
+      headers: {
+        'x-api-key': _apiKey, 
+      },
+    );
     if (response.statusCode == 200) {
       final data = json.decode(response.body)[0];
       setState(() {
@@ -24,6 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
         _breedName = data['breeds'][0]['name'];
         _breedInfo = data['breeds'][0];
       });
+    } else {
+      print('Ошибка при загрузке данных: ${response.statusCode}');
     }
   }
 
